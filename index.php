@@ -10,7 +10,7 @@
 </head>
 <body>
     <h1>ToDoリスト</h1>
-    <p style="text-align:right"><?=$_SESSION['username']?>さん <a link="logout.php">ログアウト</a></p>
+    <p style="position:absolute; right:5px; top:10px"><?=$_SESSION['username']?>さん <a link="logout.php">ログアウト</a></p>
     <div>
         <h2>タスク追加</h2>
         <form method="post" action="task_add.php">
@@ -39,24 +39,29 @@
         </form>
     </div>
     <div>
-        <table>
-            <tr>
-                <th>状態</th>
-                <th>タスク</th>
-                <th>期限</th>
-                <th>優先度</th>
-                <th>操作</th>
+        <table class="task_grid">
+            <tr class="task_grid_line">
+                <th class="task_grid_state">状態</th>
+                <th class="task_grid_task">タスク</th>
+                <th class="task_grid_deadline">期限</th>
+                <th class="task_grid_priority">優先度</th>
+                <th class="task_grid_manage">操作</th>
             </tr>
             <?php
                 $pdo = new PDO('mysql:host=mysql320.phy.lolipop.lan;
                         dbname=LAA1554150-php;charset=utf8',
                         'LAA1554150',
                         'Pass0330');
-                $sql = $pdo -> prepare('SELECT * FROM task WHERE user_id = ?');
-                $sql -> execute([$_SESSION['user_id']]);
-                $result = $sql -> fetch(PDO::FETCH_ASSOC);
-                foreach($result as $value){
-                    
+                $sql = $pdo -> prepare('SELECT * FROM task WHERE user_id = (SELECT user_id FROM user WHERE username = ?)');
+                $sql -> execute([$_SESSION['username']]);
+                foreach($sql as $row){
+                    echo '<tr class="task_grid_line">';
+                    echo '<td class="task_grid_state">'.$row['state'].'</td>';
+                    echo '<td class="task_grid_task">'.$row['task'].'</td>';
+                    echo '<td class="task_grid_deadline">'.$row['deadline'].'</td>';
+                    echo '<td class="task_grid_priority">'.$row['priority'].'</td>';
+                    echo '<td class="task_grid_manage"><a link="task_edit.php">編集</a> <a link="task_delete.php">削除</a></td>';
+                    echo '</tr>';
                 }
             ?>
         </table>

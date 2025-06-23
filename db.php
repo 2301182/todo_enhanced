@@ -10,7 +10,6 @@
         if($result['password'] == $_POST['password']){
             session_start();
             $_SESSION['username'] = $_POST['username'];
-            $_SESSION['user_id'] = $result['id'];
             header('Location: ./index.php');
             exit();
         } else {
