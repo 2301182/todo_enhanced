@@ -52,10 +52,9 @@
                         dbname=LAA1554150-php;charset=utf8',
                         'LAA1554150',
                         'Pass0330');
-                $sql = $pdo -> prepare('SELECT state,task,deadline,priority FROM task WHERE user_id = ?');
+                $sql = $pdo -> prepare('SELECT * FROM task WHERE user_id = ?');
                 $sql -> execute([$_SESSION['user_id']]);
                 $result = $sql -> fetch(PDO::FETCH_ASSOC);
-                print_r($result);
                 foreach($result as $value){
                     
                 }
