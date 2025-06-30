@@ -12,5 +12,6 @@
         <p>パスワード：<input type="password" name="password" value="pass1"></p>
         <button type="submit" name="login">ログイン</button>
     </form>
+    <br><a href="register.php">新規登録</a>
 </body>
 </html>
