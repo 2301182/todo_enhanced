@@ -53,57 +53,41 @@
                         dbname=LAA1554150-php;charset=utf8',
                         'LAA1554150',
                         'Pass0330');
-                print_r($_POST);
-                echo "<br>test<br>";
                 // フィルタ・検索
                 try{
                 if(isset($_POST['search'])){
                     // $searchsql : 完全一致
                     // $searchsql2: 部分一致
-                    echo "a";
                     $searchsql = "SELECT * FROM task WHERE user_id = (SELECT id FROM user WHERE username = ?)";
                     $param[] = $_SESSION['username'];
                     $param2[] = $_SESSION['username'];
                     // 検索条件があるものを$searchsql,$searchsql2に追記
-                    echo "b";
                     if(!empty($_POST['task'])){
-                        echo "c";
                         $searchsql .= " AND task = ?";
                         $param[] = $_POST['task'];
                         $searchsql2 = "SELECT * FROM task WHERE user_id = (SELECT id FROM user WHERE username = ?) AND task LIKE ?";
                         $param2[] = "%".$_POST['task']."%";
-                        echo "d";
                     }
                     if(!empty($_POST['date'])){
-                        echo "e";
                         $searchsql .= " AND deadline = ?";
                         $searchsql2 .= " AND deadline = ?";
                         $param[] = $_POST['date'];
                         $param2[] = $_POST['date'];
-                        echo "f";
                     }
                     if(!empty($_POST['priority'])){
-                        echo "g";
                         $searchsql .= " AND priority = ?";
                         $searchsql .= " AND priority = ?";
                         $param[] = $_POST['priority'];
                         $param2[] = $_POST['priority'];
-                        echo "h";
                     }
-                    echo "i";
                     // 完全一致検索
-                    echo "<br>",$searchsql,"<br>",$_SESSION['username'],"<br>";
                     $sql = $pdo -> prepare($searchsql);
                     $sql -> execute($param);
-                    echo "j";
                     // 部分一致検索(キーワードのみ)
                     if(!empty($_POST['task'])){
-                        echo "k";
                         $sql = $pdo -> prepare($searchsql2);
                         $sql -> execute($param2);
-                        echo "l";
                     }
-                    echo "m";
                 } else {
                     $sql = $pdo -> prepare('SELECT * FROM task WHERE user_id = (SELECT id FROM user WHERE username = ?)');
                     $sql -> execute([$_SESSION['username']]);
