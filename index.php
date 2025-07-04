@@ -11,6 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
     <h1>ToDoリスト</h1>
@@ -101,7 +102,7 @@
                 }
                 foreach($sql as $row){
                     echo '<tr class="task_grid_line">';
-                    echo '<td class="task_grid_state"><input type="checkbox" name="state" ';
+                    echo '<td class="task_grid_state"><input type="checkbox" name="'.$row['id'].'" ';
                     if($row['state']){echo 'checked';} echo '></td>';
                     echo '<td class="task_grid_task">'.$row['task'].'</td>';
                     echo '<td class="task_grid_deadline">'.$row['deadline'].'</td>';
@@ -113,5 +114,22 @@
             ?>
         </table>
     </div>
+    <script>
+        //チェックボックスの監視
+        $(document).ready(function(){
+            $('input[type="checkbox"]').change(function(){
+                var checkedName = [];
+                $('input[type="checkbox"]:checked').each(function(){
+                    checkedName.push($(this).attr('name'));
+                });
+        // ajaxでtask_toggle.phpにチェックボックスのデータをpost送信
+                $.ajax({
+                    type: "POST",
+                    url: "task_toggle.php",
+                    data: { checkedName: checkedName }
+                });
+            });
+        });
+  </script>
 </body>
 </html>
