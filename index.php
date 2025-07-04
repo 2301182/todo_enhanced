@@ -16,6 +16,31 @@
 <body>
     <h1>ToDoリスト</h1>
     <p style="position:absolute; right:5px; top:10px"><?=$_SESSION['username']?>さん <a href="logout.php">ログアウト</a></p>
+    <div id="task_progress" style="margin-right:20%">タスク進捗
+    <?php
+        $pdo = new PDO('mysql:host=mysql320.phy.lolipop.lan;
+                        dbname=LAA1554150-php;charset=utf8',
+                        'LAA1554150',
+                        'Pass0330');
+        // 現在の進捗率割り出し
+        $sql = $pdo -> prepare('SELECT id FROM task WHERE user_id = (SELECT id FROM user WHERE username = ?)');
+        $sql -> execute([$_SESSION['username']]);
+        $taskall = $sql -> rowCount();
+        $sql = $pdo -> prepare('SELECT id FROM task WHERE user_id = (SELECT id FROM user WHERE username = ?) AND state = 1');
+        $sql -> execute([$_SESSION['username']]);
+        $taskended = $sql -> rowCount();
+        // 0除算対策
+        if($taskended == 0){
+            $progresswidth = 0;
+        } else {
+            $progresswidth = $taskended / $taskall * 100;
+        }
+        echo '<span id="progress_num">'.$progresswidth.'%</span>';
+        echo '<div id="progress_outline" style="heght: 15px; width: 100%; background-color:lightgray">';
+        echo '<div id="progress" style="height: 15px; width: '.$progresswidth.'%; background-color: lightgreen"> </div>';
+        echo '</div>';
+    ?>
+    </div>
     <div>
         <h2>タスク追加</h2>
         <form method="post" action="task_add.php">
@@ -122,12 +147,24 @@
                 $('input[type="checkbox"]:checked').each(function(){
                     checkedName.push($(this).attr('name'));
                 });
-        // ajaxでtask_toggle.phpにチェックボックスのデータをpost送信
+                // ajaxでtask_toggle.phpにチェックボックスのデータをpost送信
                 $.ajax({
                     type: "POST",
                     url: "task_toggle.php",
                     data: { checkedName: checkedName }
-                });
+                })
+                // ajax処理が成功した際に進捗バーの更新
+                .then(
+                    function (response){
+                        if(response != 0){
+                            $("#progress").css("width", response);
+                            $("#progress_num").html(response);
+                        } else{
+                            $("#progress").css("width", "0px");
+                            $("#progress_num").html("0%");
+                        }
+                    }
+                );
             });
         });
   </script>
